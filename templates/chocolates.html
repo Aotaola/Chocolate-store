@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Our Chocolates - Online Chocolate Shop{% endblock %}
+
+{% block content %}
+    <h2>Our Chocolates</h2>
+    {% if chocolates %}
+        <ul>
+            {% for chocolate in chocolates %}
+                <li>
+                    <a href="{{ url_for('chocolate', chocolate_id=chocolate.id) }}">
+                        {{ chocolate.name }} - ${{ chocolate.price }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No chocolates available at the moment.</p>
+    {% endif %}
+{% endblock %}

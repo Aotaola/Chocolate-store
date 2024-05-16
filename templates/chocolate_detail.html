@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ chocolate.name }} - Online Chocolate Shop{% endblock %}
+
+{% block content %}
+    <h2>{{ chocolate.name }}</h2>
+    <p>Price: ${{ chocolate.price }}</p>
+    <p>Stock: {{ chocolate.stock }}</p>
+    <p>Description: {{ chocolate.description }}</p>
+
+    <!-- Edit form (initially hidden, shown when 'Edit' is clicked) -->
+    <div id="editForm" style="display: none;">
+        <form id="editChocolateForm">
+            <label for="name">Chocolate Name:</label>
+            <input type="text" id="name" name="name" value="{{ chocolate.name }}" required><br><br>
+
+            <label for="price">Price:</label>
+            <input type="number" step="0.01" id="price" name="price" value="{{ chocolate.price }}" required><br><br>
+
+            <label for="stock">Stock:</label>
+            <input type="number" id="stock" name="stock" value="{{ chocolate.stock }}" required><br><br>
+
+            <label for="description">Description:</label>
+            <textarea id="description" name="description">{{ chocolate.description }}</textarea><br><br>
+
+            <button type="button" onclick="submitEditForm()">Update Chocolate</button>
+        </form>
+    </div>
+    <button onclick="showEditForm()">Edit</button>
+
+    <!-- Delete button -->
+    <form onsubmit="deleteChocolate(event, {{ chocolate.id }})">
+        <input type="submit" value="Delete" class="btn btn-danger">
+    </form>
+    
+
+    <script>
+        function showEditForm() {
+            document.getElementById('editForm').style.display = 'block';
+        }
+
+        function submitEditForm() {
+            const formData = {
+                name: document.getElementById('name').value,
+                price: document.getElementById('price').value,
+                stock: document.getElementById('stock').value,
+                description: document.getElementById('description').value,
+            };
+
+            fetch('{{ url_for("update", chocolate_id=chocolate.id) }}', {
+                method: 'PATCH', // Using PATCH request
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            }).then(response => response.json())
+              .then(data => {
+                  alert('Update successful');
+                  window.location.reload(); // Reload the page to show the updated info
+              })
+              .catch(error => console.error('Error:', error));
+        }
+
+        function deleteChocolate(event, chocolateId) {
+        event.preventDefault();  // Prevent the form from submitting normally
+        fetch('/delete_chocolate/' + chocolateId, {
+            method: 'DELETE',
+        }).then(response => {
+            if (response.ok) {
+                alert('Chocolate deleted successfully');
+                window.location.href = '/chocolates';  // Redirect to the chocolates page
+            } else {
+            alert('Failed to delete chocolate');
+            }
+        }).catch(error => console.error('Error:', error));
+        }
+    </script>
+
+{% endblock %}
+
