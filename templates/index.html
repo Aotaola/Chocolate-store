@@ -1,8 +1,27 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% block title %}Home - Online Chocolate Shop{%
+endblock %} {% block content %}
+<h2>Welcome to the Online Chocolate Shop!</h2>
+<form action="{{ url_for('index') }}" method="GET">
+  <label for="searchQuery">Search chocolates:</label>
+  <input
+    type="text"
+    id="searchQuery"
+    name="query"
+    placeholder="Search chocolates..."
+    required
+  />
 
-{% block title %}Home - Online Chocolate Shop{% endblock %}
+  <button type="submit">Search</button>
+</form>
 
-{% block content %}
-    <h2>Welcome to the Online Chocolate Shop!</h2>
-    <p>Discover our wide variety of chocolates and find your favorite!</p>
-{% endblock %}
+{% if chocolates %}
+<h3>Search Results:</h3>
+<ul>
+  {% for chocolate in chocolates %}
+  <li>{{ chocolate.name }} - ${{ chocolate.price | format('0.2f') }}</li>
+
+  {% endfor %}
+</ul>
+{% else %}
+<p>No chocolates found or enter a search term to find chocolates.</p>
+{% endif %} {% endblock %}

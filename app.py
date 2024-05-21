@@ -4,18 +4,15 @@ from flask_migrate import Migrate
 from flask import jsonify
 import os
 
-# Initialize the Flask application
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///chocolate_shop.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Initialize the database
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 
-# Database models
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -29,10 +26,18 @@ class Chocolate(db.Model):
     stock = db.Column(db.Integer, nullable=False)
     description = db.Column(db.Text, nullable=True)
 
-# Routes
-@app.route('/')
+# routes
+@app.route('/', methods=['GET'])
 def index():
-    return render_template('index.html')
+   query = request.args.get('query')
+   print("Query Received:", query) 
+   chocolates = None
+   if query:
+       chocolates = Chocolate.query.filter(Chocolate.name.like('%' + query + '%')).all()
+       print("Chocolates Found:", chocolates) 
+   else:
+       chocolates = Chocolate.query.all()
+   return render_template('index.html', chocolates=chocolates)
 
 @app.route('/about')
 def about():
@@ -85,7 +90,7 @@ def delete(chocolate_id):
     return 'Chocolate not found', 404
 
 
-# Run the app
+# run the app
 if __name__ == '__main__':
-    db.create_all()  # Create database tables for our data models
+    db.create_all()  
     app.run(debug=True)
