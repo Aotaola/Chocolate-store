@@ -18,8 +18,7 @@ endblock %} {% block content %}
 <h3>Search Results:</h3>
 <ul>
   {% for chocolate in chocolates %}
-  <li>{{ chocolate.name }} - ${{ chocolate.price | format('0.2f') }}</li>
-
+  <li>{{ chocolate.name }} - ${{ chocolate.price | round(2) }}</li>
   {% endfor %}
 </ul>
 {% else %}

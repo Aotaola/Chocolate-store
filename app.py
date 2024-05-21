@@ -5,13 +5,11 @@ from flask import jsonify
 import os
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///chocolate_shop.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
-
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -50,7 +48,6 @@ def chocolates():
         return render_template('chocolates.html', chocolates=None)    
     return render_template('chocolates.html', chocolates=chocolates)
 
-
 @app.route('/chocolates/<int:chocolate_id>')
 def chocolate(chocolate_id):
     chocolate = Chocolate.query.get(chocolate_id)
@@ -88,7 +85,6 @@ def delete(chocolate_id):
         chocolates = Chocolate.query.all()  
         return render_template('chocolates.html', chocolates=chocolates)
     return 'Chocolate not found', 404
-
 
 # run the app
 if __name__ == '__main__':
